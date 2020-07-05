@@ -305,13 +305,13 @@ sudo -u standup /bin/tar xzf ~standup/$BITCOINPLAIN-x86_64-linux-gnu.tar.gz -C ~
 # Start Up Bitcoin
 echo "$0 - Configuring Bitcoin."
 
-sudo -u standup /bin/mkdir ~standup/.bitcoin
+sudo -u standup /bin/mkdir /mnt/volume_nyc1_02/.bitcoin
 
 # The only variation between Mainnet and Testnet is that Testnet has the "testnet=1" variable
 # The only variation between Regular and Pruned is that Pruned has the "prune=550" variable, which is the smallest possible prune
 RPCPASSWORD=$(xxd -l 16 -p /dev/urandom)
 
-cat >> ~standup/.bitcoin/bitcoin.conf << EOF
+cat >> /mnt/volume_nyc1_02/.bitcoin/bitcoin.conf << EOF
 server=1
 rpcuser=StandUp
 rpcpassword=$RPCPASSWORD
@@ -327,33 +327,33 @@ fi
 
 if [ "$BTCTYPE" == "Mainnet" ]; then
 
-cat >> ~standup/.bitcoin/bitcoin.conf << EOF
+cat >> /mnt/volume_nyc1_02/.bitcoin/bitcoin.conf << EOF
 txindex=1
 EOF
 
 elif [ "$BTCTYPE" == "Pruned Mainnet" ]; then
 
-cat >> ~standup/.bitcoin/bitcoin.conf << EOF
+cat >> /mnt/volume_nyc1_02/.bitcoin/bitcoin.conf << EOF
 prune=550
 EOF
 
 elif [ "$BTCTYPE" == "Testnet" ]; then
 
-cat >> ~standup/.bitcoin/bitcoin.conf << EOF
+cat >> /mnt/volume_nyc1_02/.bitcoin/bitcoin.conf << EOF
 txindex=1
 testnet=1
 EOF
 
 elif [ "$BTCTYPE" == "Pruned Testnet" ]; then
 
-cat >> ~standup/.bitcoin/bitcoin.conf << EOF
+cat >> /mnt/volume_nyc1_02/.bitcoin/bitcoin.conf << EOF
 prune=550
 testnet=1
 EOF
 
 elif [ "$BTCTYPE" == "Private Regtest" ]; then
 
-cat >> ~standup/.bitcoin/bitcoin.conf << EOF
+cat >> /mnt/volume_nyc1_02/.bitcoin/bitcoin.conf << EOF
 regtest=1
 txindex=1
 EOF
@@ -365,7 +365,7 @@ else
 
 fi
 
-cat >> ~standup/.bitcoin/bitcoin.conf << EOF
+cat >> /mnt/volume_nyc1_02/.bitcoin/bitcoin.conf << EOF
 [test]
 rpcbind=127.0.0.1
 rpcport=18332
@@ -377,8 +377,8 @@ rpcbind=127.0.0.1
 rpcport=18443
 EOF
 
-/bin/chown standup ~standup/.bitcoin/bitcoin.conf
-/bin/chmod 600 ~standup/.bitcoin/bitcoin.conf
+/bin/chown standup /mnt/volume_nyc1_02/.bitcoin/bitcoin.conf
+/bin/chmod 600 /mnt/volume_nyc1_02/.bitcoin/bitcoin.conf
 
 # Setup bitcoind as a service that requires Tor
 echo "$0 - Setting up Bitcoin as a systemd service."
@@ -397,7 +397,7 @@ Description=Bitcoin daemon
 After=tor.service
 Requires=tor.service
 [Service]
-ExecStart=/usr/local/bin/bitcoind -conf=/home/standup/.bitcoin/bitcoin.conf
+ExecStart=/usr/local/bin/bitcoind -conf=/mnt/volume_nyc1_02/.bitcoin/bitcoin.conf
 # Process management
 ####################
 Type=simple
